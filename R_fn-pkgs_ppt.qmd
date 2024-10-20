@@ -1,0 +1,218 @@
+---
+title: "R functions and packages"
+author: "Claudia HGE"
+format: pptx
+editor: visual
+---
+
+## What are functions?
+
+We might remember the mathematical functions like
+
+```{r, echo=TRUE, include= TRUE, eval=FALSE}
+f(x) = x + 2
+^----------- make a function where
+  ^--------- x is the variable
+     ^------ and returns:
+       ^^^^^ the variable plus two  
+```
+
+## Why do we use functions?
+
+if we have **one** value to sum (100), it's easier to use a calculator, and type
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE}
+100 + 2
+```
+
+1.  but, what if we have a hundred different numbers?
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE}
+my100 <- sample(1:1000, 100)
+head(my100)
+```
+
+## Why do we use functions?
+
+It's easier to apply a function:
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE, size=3}
+my100plus2 <- my100 + 2
+head(my100plus2)
+```
+
+These type of functions are a piece of cake to R, but the R function can get as complex as you wish
+
+## R Functions
+
+-   R have way too many functions incorporated, e.g.,
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE, size=3}
+sum(my100plus2) # sum() returns the sum of every element in the vector
+```
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE, size=3}
+length(my100plus2) # length() returns the number of elements in a vector
+```
+
+## R Functions - arguments
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE, size=3}
+# plot() returns a graph. Notice the arguments
+plot(my100plus2) 
+plot(my100plus2, main = "my one-hundred point", ylab = "value", sub = "by ClaudHGE", col = 'green') 
+```
+
+## Functions in packages
+
+Although R has tons of functions, there are packages that bring us more
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE, size=3}
+#install.packages("ggplot2") to install the package
+library(ggplot2) # Load the package
+data <- data.frame(Index = 1:100, Value = my100) # make the data readable to the function
+# Create the plot with aesthetics
+ggplot(data, aes(x = Index, y = Value)) +
+  geom_line(color = "blue", size = 1.2) +  # Line color and size
+  geom_point(shape = 21, fill = "orange", size = 2) +  # Points with shape and fill
+  theme_minimal(base_size = 15) +  # Minimal theme with base font size
+  labs(title = "Random Number Plot", # Title of the plot
+       x = "Index", y = "Value") +  # axes label
+  theme(plot.title = element_text(hjust = 0.5)) # Center the title
+```
+
+## Functions in packages
+
+R is a collaborative world and users sometimes create their own packages that are available to any other user.
+
+Now, we used a data set with 100 numbers, what if you (may) have multiple data sets?
+
+You can copy and paste your code and make changes here and there
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE}
+ds2 <- sample(1:1000, 100)
+ds2plus2 <- ds2 + 2
+sum(ds2plus2)
+plot(ds2plus2) 
+```
+
+## or you can create a function
+
+Functions are reusable!
+
+type fun and create the function
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE}
+plusplot <- function(ds) {
+  plus2 <- ds + 2
+  print(sum(plus2))
+  plot(plus2)
+  return(plus2)
+}
+```
+
+## use the function
+
+Now, the function is ready to be used
+
+```{r, echo=TRUE, include= TRUE, eval=TRUE}
+ds3 <- sample(1:1000, 100) # your data
+ds3_2 <- plusplot(ds = ds3) #apply the function to the data
+head(ds3_2)
+```
+
+## Reusability
+
+-   You can use this function as many times as you want as long as it is loaded.
+-   Every time you clean your `Global environment` you'll need to run it again.
+-   You would need to copy and paste the function to every new project that uses it, or you can save it in a file and run it using `source()`.
+-   But what if you have multiple functions? at some point you'll find it annoying having to run the functions again and again. `library()` is simple and easy!
+
+## Packages
+
+Packages are a collection of functions that we can load on our machine or share with others. Let's create a package! If you want to share it with others, one easy way is via GitHub!
+
+
+## Anatomy of a package
+
+-   Metadata: `DESCRIPTION` name of the pkg, description, version, dependencies
+
+-   Source code: `.R` files in the `R/` dir
+
+-   roxygen comments inside the `.R` files that describe how the fun operates, arguments, ...
+
+-   namespace for the exported and imported functions
+
+-   tests and other things
+
+## Steps to create an R Package
+
+### 1. Create a GitHub repo
+
+-   Go to GitHub and create a new repository for your package.
+
+### 2. Create Create an R Project Open RStudio.
+
+-   Click on the "Project" menu \> "New Project."
+-   Choose "Version Control" \> "Git."
+-   Enter the URL of your GitHub repository and select a local directory.
+
+## Steps to create an R Package
+
+### 3. Install Required Packages
+
+```{r, echo=TRUE, include= TRUE, eval=FALSE}
+install.packages(c("devtools", "usethis"))
+library(devtools)
+library(usethis)
+```
+
+### 4. Create the Package, add licence
+
+```{r, echo=TRUE, include= TRUE, eval=FALSE}
+usethis::create_package(".")
+usethis::use_mit_license()
+```
+
+## Steps to create an R Package
+
+### 5. Create the function file
+
+```{r, echo=TRUE, include= TRUE, eval=FALSE}
+usethis::use_r ("name_of_the_function")
+```
+
+### 6. Write the function and Insert roxygen comments go to the menu bar:
+
+Code \> Insert Roxygen Skeleton. `ctl+alt+shift+r`
+
+### 7. Document the Package:
+
+`devtools::document()`
+
+## Steps to create an R Package
+
+### 8. Check, Commit, Load, Install
+
+```{r, echo=TRUE, include= TRUE, eval=FALSE}
+devtools::check()
+usethis::use_git(message = "your commit message") # do this often
+devtools::load_all()
+devtools::install()
+```
+
+## Install a package from GitHub 
+
+```{r, echo=TRUE, include= TRUE, eval=FALSE}
+devtools::install_github("GitHubUser/package_name")
+library(name_of_the_package)
+?name_of_the_function #get help
+# use the function: 
+name_of_the_function(arguments)
+```
+
+## Resources
+
+-   Book: R Packages (2e) (r-pkgs.org)
+-   Building R packages with devtools and usethis \| RStudio https://www.youtube.com/watch?v=EpTkT6Rkgbs
+-   It's a Great Time to be an R Package Developer! - posit::conf(2023) https://www.youtube.com/watch?v=hfqjyeA_z7s
